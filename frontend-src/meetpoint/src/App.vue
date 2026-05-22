@@ -1,6 +1,20 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { createUser } from './services/registrationApi'
+import LoginForm from './components/LoginForm.vue'
+import UserSession from './components/UserSession.vue'
+import { loadSession, logoutUser, type LoggedInUser } from './services/authApi'
+
+const loggedInUser = ref<LoggedInUser | null>(loadSession())
+
+function handleLoginSuccess(user: LoggedInUser) {
+  loggedInUser.value = user
+}
+
+function handleLogout() {
+  logoutUser()
+  loggedInUser.value = null
+}
 
 const form = reactive({
   username: '',
@@ -168,6 +182,9 @@ async function submitRegistration() {
           {{ message }}
         </p>
       </form>
+
+      <UserSession v-if="loggedInUser" :user="loggedInUser" @logout="handleLogout" />
+      <LoginForm v-else @login-success="handleLoginSuccess" />
     </section>
   </main>
 </template>
