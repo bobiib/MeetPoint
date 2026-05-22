@@ -1,0 +1,4 @@
+db-uri = "postgres://meetpoint_user:meetpoint_password@localhost:5432/meetpoint"
+db-schemas = "api"
+db-anon-role = "meetpoint_web"
+server-port = 3000
