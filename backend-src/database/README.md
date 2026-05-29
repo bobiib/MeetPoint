@@ -12,6 +12,7 @@ Diese Dateien decken Dmytros heutige Arbeitspakete ab:
 \i backend-src/database/002_seed_demo_data.sql
 \i backend-src/database/003_postgrest_permissions.sql
 \i backend-src/database/004_auth_functions.sql
+\i backend-src/database/005_relationship_checks.sql
 ```
 
 ## Registrierung
@@ -55,3 +56,35 @@ Bei korrekten Daten gibt die Funktion zurück:
   "email": "boris@example.com"
 }
 Das Passwort wird mit crypt() gegen password_hash geprüft.
+
+## Beziehungen prüfen
+
+Mit dieser Datei können die Fremdschlüssel kontrolliert werden:
+
+```sql
+\i backend-src/database/005_relationship_checks.sql
+```
+
+Wichtige Beziehungen:
+
+- Gruppen gehören einem Benutzer über `groups.owner_id`.
+- Gruppenmitglieder verbinden Benutzer und Gruppen über `group_members`.
+- Interessen gehören zu Gruppen.
+- Aktivitäten gehören zu Gruppen.
+- Aktivitäten können mit Interessen verbunden werden.
+- Terminvorschläge gehören zu Aktivitäten.
+- Verfügbarkeiten verbinden Benutzer und Terminvorschläge.
+
+## DBeaver-Anleitung
+
+1. Datenbank `meetpoint` öffnen.
+2. Datei `001_create_tables.sql` ausführen.
+3. Datei `005_relationship_checks.sql` ausführen.
+4. Prüfen, ob Fremdschlüssel angezeigt werden.
+5. Besonders kontrollieren:
+   - `groups.owner_id -> users.id`
+   - `group_members.group_id -> groups.id`
+   - `group_members.user_id -> users.id`
+   - `appointments.activity_id -> activities.id`
+   - `availabilities.appointment_id -> appointments.id`
+   - `availabilities.user_id -> users.id`
