@@ -7,6 +7,10 @@ const props = defineProps<{
   user: LoggedInUser
 }>()
 
+const emit = defineEmits<{
+  groupSelected: [groupId: string]
+}>()
+
 const groups = ref<Group[]>([])
 const selectedGroupId = ref('')
 const editingGroupId = ref('')
@@ -45,6 +49,11 @@ function editGroup(group: Group) {
   editingGroupId.value = group.id
   form.name = group.name
   form.description = group.description ?? ''
+}
+
+function selectGroup(groupId: string) {
+  selectedGroupId.value = groupId
+  emit('groupSelected', groupId)
 }
 
 async function saveGroup() {
@@ -133,7 +142,13 @@ onMounted(loadGroups)
         :class="{ selected: selectedGroupId === group.id }"
       >
         <label class="select-row">
-          <input v-model="selectedGroupId" name="selected-group" type="radio" :value="group.id" />
+          <input
+            :checked="selectedGroupId === group.id"
+            name="selected-group"
+            type="radio"
+            :value="group.id"
+            @change="selectGroup(group.id)"
+          />
           <span>
             <strong>{{ group.name }}</strong>
             <small>{{ group.description || 'Keine Beschreibung' }}</small>

@@ -4,10 +4,12 @@ import { createUser } from './services/registrationApi'
 import LoginForm from './components/LoginForm.vue'
 import UserSession from './components/UserSession.vue'
 import GroupManager from './components/GroupManager.vue'
+import GroupMembersManager from './components/GroupMembersManager.vue'
 import AppointmentProposalForm from './components/AppointmentProposalForm.vue'
 import { loadSession, logoutUser, type LoggedInUser } from './services/authApi'
 
 const loggedInUser = ref<LoggedInUser | null>(loadSession())
+const selectedGroupId = ref('')
 
 function handleLoginSuccess(user: LoggedInUser) {
   loggedInUser.value = user
@@ -16,6 +18,11 @@ function handleLoginSuccess(user: LoggedInUser) {
 function handleLogout() {
   logoutUser()
   loggedInUser.value = null
+  selectedGroupId.value = ''
+}
+
+function handleGroupSelected(groupId: string) {
+  selectedGroupId.value = groupId
 }
 
 const form = reactive({
@@ -189,7 +196,8 @@ async function submitRegistration() {
       <LoginForm v-else @login-success="handleLoginSuccess" />
 
       <template v-if="loggedInUser">
-        <GroupManager :user="loggedInUser" />
+        <GroupManager :user="loggedInUser" @group-selected="handleGroupSelected" />
+        <GroupMembersManager v-if="selectedGroupId" :group-id="selectedGroupId" />
         <AppointmentProposalForm :user="loggedInUser" />
       </template>
     </section>

@@ -12,8 +12,9 @@ grant select, insert on api.users to meetpoint_web;
 grant select, insert, update on api.groups to meetpoint_web;
 grant select, insert on api.appointments to meetpoint_web;
 
+grant select, insert, delete on api.group_members to meetpoint_web;
+
 grant select on
-  api.group_members,
   api.interests,
   api.activities,
   api.availabilities
