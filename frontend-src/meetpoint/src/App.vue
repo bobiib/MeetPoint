@@ -3,6 +3,8 @@ import { computed, reactive, ref } from 'vue'
 import { createUser } from './services/registrationApi'
 import LoginForm from './components/LoginForm.vue'
 import UserSession from './components/UserSession.vue'
+import GroupManager from './components/GroupManager.vue'
+import AppointmentProposalForm from './components/AppointmentProposalForm.vue'
 import { loadSession, logoutUser, type LoggedInUser } from './services/authApi'
 
 const loggedInUser = ref<LoggedInUser | null>(loadSession())
@@ -185,6 +187,11 @@ async function submitRegistration() {
 
       <UserSession v-if="loggedInUser" :user="loggedInUser" @logout="handleLogout" />
       <LoginForm v-else @login-success="handleLoginSuccess" />
+
+      <template v-if="loggedInUser">
+        <GroupManager :user="loggedInUser" />
+        <AppointmentProposalForm :user="loggedInUser" />
+      </template>
     </section>
   </main>
 </template>

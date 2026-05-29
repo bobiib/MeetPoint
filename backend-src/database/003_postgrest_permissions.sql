@@ -9,12 +9,13 @@ $$;
 grant usage on schema api to meetpoint_web;
 
 grant select, insert on api.users to meetpoint_web;
+grant select, insert, update on api.groups to meetpoint_web;
+grant select, insert on api.appointments to meetpoint_web;
+
 grant select on
-  api.groups,
   api.group_members,
   api.interests,
   api.activities,
-  api.appointments,
   api.availabilities
 to meetpoint_web;
 
