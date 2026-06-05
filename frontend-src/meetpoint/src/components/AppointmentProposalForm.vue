@@ -2,13 +2,18 @@
 import { reactive, ref } from 'vue'
 import { createAppointment } from '../services/appointmentApi'
 import type { LoggedInUser } from '../services/authApi'
+import type { Activity } from '../services/activityApi'
 
 const props = defineProps<{
   user: LoggedInUser
+  activity: Activity | null
+}>()
+
+const emit = defineEmits<{
+  appointmentCreated: []
 }>()
 
 const form = reactive({
-  activityId: '',
   date: '',
   time: '',
   description: '',
@@ -19,7 +24,6 @@ const message = ref('')
 const messageType = ref<'success' | 'error' | ''>('')
 
 function resetForm() {
-  form.activityId = ''
   form.date = ''
   form.time = ''
   form.description = ''
@@ -29,8 +33,14 @@ async function submitAppointment() {
   message.value = ''
   messageType.value = ''
 
-  if (!form.activityId.trim() || !form.date || !form.time) {
-    message.value = 'Bitte gib Aktivitaet, Datum und Zeit ein.'
+  if (!props.activity) {
+    message.value = 'Bitte waehle zuerst eine Aktivitaet aus.'
+    messageType.value = 'error'
+    return
+  }
+
+  if (!form.date || !form.time) {
+    message.value = 'Bitte gib Datum und Zeit ein.'
     messageType.value = 'error'
     return
   }
@@ -39,7 +49,7 @@ async function submitAppointment() {
 
   try {
     await createAppointment({
-      activityId: form.activityId.trim(),
+      activityId: props.activity.id,
       startsAt: new Date(`${form.date}T${form.time}`).toISOString(),
       description: form.description.trim(),
       createdBy: props.user.id,
@@ -48,6 +58,7 @@ async function submitAppointment() {
     message.value = 'Terminvorschlag wurde erstellt.'
     messageType.value = 'success'
     resetForm()
+    emit('appointmentCreated')
   } catch {
     message.value = 'Terminvorschlag konnte nicht gespeichert werden.'
     messageType.value = 'error'
@@ -64,12 +75,11 @@ async function submitAppointment() {
       <h2 id="appointment-title">Terminvorschlag erstellen</h2>
     </div>
 
-    <form class="appointment-form" @submit.prevent="submitAppointment">
-      <label>
-        Aktivitaets-ID
-        <input v-model="form.activityId" name="activity-id" type="text" />
-      </label>
+    <p class="activity-context">
+      {{ activity ? `Aktivitaet: ${activity.title}` : 'Waehle zuerst eine Aktivitaet aus.' }}
+    </p>
 
+    <form class="appointment-form" @submit.prevent="submitAppointment">
       <div class="date-grid">
         <label>
           Datum
@@ -109,7 +119,8 @@ async function submitAppointment() {
 }
 
 .section-heading p,
-.section-heading h2 {
+.section-heading h2,
+.activity-context {
   margin: 0;
 }
 
@@ -123,6 +134,11 @@ async function submitAppointment() {
 .section-heading h2 {
   color: #102a43;
   font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+
+.activity-context {
+  color: #627d98;
+  font-weight: 700;
 }
 
 .appointment-form {

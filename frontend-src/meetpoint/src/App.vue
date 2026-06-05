@@ -6,10 +6,16 @@ import UserSession from './components/UserSession.vue'
 import GroupManager from './components/GroupManager.vue'
 import GroupMembersManager from './components/GroupMembersManager.vue'
 import AppointmentProposalForm from './components/AppointmentProposalForm.vue'
+import InterestManager from './components/InterestManager.vue'
+import ActivityOverview from './components/ActivityOverview.vue'
+import AppointmentList from './components/AppointmentList.vue'
 import { loadSession, logoutUser, type LoggedInUser } from './services/authApi'
+import type { Activity } from './services/activityApi'
 
 const loggedInUser = ref<LoggedInUser | null>(loadSession())
 const selectedGroupId = ref('')
+const selectedActivity = ref<Activity | null>(null)
+const appointmentRefreshKey = ref(0)
 
 function handleLoginSuccess(user: LoggedInUser) {
   loggedInUser.value = user
@@ -19,10 +25,20 @@ function handleLogout() {
   logoutUser()
   loggedInUser.value = null
   selectedGroupId.value = ''
+  selectedActivity.value = null
 }
 
 function handleGroupSelected(groupId: string) {
   selectedGroupId.value = groupId
+  selectedActivity.value = null
+}
+
+function handleActivitySelected(activity: Activity) {
+  selectedActivity.value = activity
+}
+
+function handleAppointmentCreated() {
+  appointmentRefreshKey.value += 1
 }
 
 const form = reactive({
@@ -198,7 +214,22 @@ async function submitRegistration() {
       <template v-if="loggedInUser">
         <GroupManager :user="loggedInUser" @group-selected="handleGroupSelected" />
         <GroupMembersManager v-if="selectedGroupId" :group-id="selectedGroupId" />
-        <AppointmentProposalForm :user="loggedInUser" />
+        <InterestManager v-if="selectedGroupId" :group-id="selectedGroupId" :user="loggedInUser" />
+        <ActivityOverview
+          v-if="selectedGroupId"
+          :group-id="selectedGroupId"
+          @activity-selected="handleActivitySelected"
+        />
+        <AppointmentProposalForm
+          :activity="selectedActivity"
+          :user="loggedInUser"
+          @appointment-created="handleAppointmentCreated"
+        />
+        <AppointmentList
+          :key="`${selectedActivity?.id ?? 'none'}-${appointmentRefreshKey}`"
+          :activity="selectedActivity"
+          :user="loggedInUser"
+        />
       </template>
     </section>
   </main>
