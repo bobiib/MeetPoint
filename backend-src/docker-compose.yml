@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: meetpoint-db
+    environment:
+      POSTGRES_DB: meetpoint
+      POSTGRES_USER: meetpoint
+      POSTGRES_PASSWORD: meetpoint
+    ports:
+      - "5433:5432"
+    volumes:
+      - meetpoint-db-data:/var/lib/postgresql/data
+      - ./database/001_create_tables.sql:/docker-entrypoint-initdb.d/001_create_tables.sql:ro
+      - ./database/002_seed_demo_data.sql:/docker-entrypoint-initdb.d/002_seed_demo_data.sql:ro
+      - ./database/003_postgrest_permissions.sql:/docker-entrypoint-initdb.d/003_postgrest_permissions.sql:ro
+      - ./database/004_auth_functions.sql:/docker-entrypoint-initdb.d/004_auth_functions.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meetpoint -d meetpoint"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  postgrest:
+    image: postgrest/postgrest:v12.2.8
+    container_name: meetpoint-postgrest
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGRST_DB_URI: postgres://meetpoint:meetpoint@db:5432/meetpoint
+      PGRST_DB_SCHEMAS: api
+      PGRST_DB_ANON_ROLE: meetpoint_web
+      PGRST_SERVER_PORT: 3000
+    ports:
+      - "3001:3000"
+
+volumes:
+  meetpoint-db-data:

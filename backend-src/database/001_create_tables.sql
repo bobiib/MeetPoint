@@ -157,6 +157,24 @@ create trigger insert_user
 instead of insert on api.users
 for each row execute function api.insert_user();
 
+create or replace function app.add_group_owner_member()
+returns trigger
+language plpgsql
+as $$
+begin
+  insert into app.group_members (group_id, user_id, role)
+  values (new.id, new.owner_id, 'owner')
+  on conflict (group_id, user_id) do nothing;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists add_group_owner_member on app.groups;
+create trigger add_group_owner_member
+after insert on app.groups
+for each row execute function app.add_group_owner_member();
+
 create or replace view api.groups as
 select id, name, description, owner_id, created_at, updated_at
 from app.groups;
