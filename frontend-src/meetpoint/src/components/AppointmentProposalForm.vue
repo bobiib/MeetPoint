@@ -34,7 +34,7 @@ async function submitAppointment() {
   messageType.value = ''
 
   if (!props.activity) {
-    message.value = 'Bitte waehle zuerst eine Aktivitaet aus.'
+    message.value = 'Bitte wähle zuerst eine Aktivität aus.'
     messageType.value = 'error'
     return
   }
@@ -76,7 +76,7 @@ async function submitAppointment() {
     </div>
 
     <p class="activity-context">
-      {{ activity ? `Aktivitaet: ${activity.title}` : 'Waehle zuerst eine Aktivitaet aus.' }}
+      {{ activity ? `Aktivität: ${activity.title}` : 'Wähle zuerst eine Aktivität aus.' }}
     </p>
 
     <form class="appointment-form" @submit.prevent="submitAppointment">

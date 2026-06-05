@@ -34,7 +34,7 @@ async function loadActivities() {
       selectedActivityId.value = ''
     }
   } catch {
-    message.value = 'Aktivitaeten konnten nicht geladen werden.'
+    message.value = 'Aktivitäten konnten nicht geladen werden.'
   } finally {
     isLoading.value = false
   }
@@ -53,15 +53,15 @@ onMounted(loadActivities)
   <section class="workspace-section" aria-labelledby="activities-title">
     <div class="section-heading">
       <p>Arbeitspaket 3.2</p>
-      <h2 id="activities-title">Aktivitaetsvorschlaege anzeigen</h2>
+      <h2 id="activities-title">Aktivitätsvorschläge anzeigen</h2>
     </div>
 
     <p v-if="message" class="form-message error" role="status">{{ message }}</p>
 
     <div class="activity-list">
-      <p v-if="isLoading" class="empty-state">Aktivitaeten werden geladen...</p>
+      <p v-if="isLoading" class="empty-state">Aktivitäten werden geladen...</p>
       <p v-else-if="activities.length === 0" class="empty-state">
-        Noch keine Aktivitaetsvorschlaege vorhanden.
+        Noch keine Aktivitätsvorschläge vorhanden.
       </p>
 
       <article
@@ -75,7 +75,7 @@ onMounted(loadActivities)
           <strong>{{ activity.title }}</strong>
           <small>{{ activity.description || 'Keine Beschreibung' }}</small>
         </div>
-        <button type="button" @click="selectActivity(activity)">Auswaehlen</button>
+        <button type="button" @click="selectActivity(activity)">Auswählen</button>
       </article>
     </div>
   </section>

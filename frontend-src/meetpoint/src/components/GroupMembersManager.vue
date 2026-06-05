@@ -65,11 +65,11 @@ async function addMember() {
 
     await addGroupMember(props.groupId, user.id)
     form.email = ''
-    message.value = 'Mitglied wurde hinzugefuegt.'
+    message.value = 'Mitglied wurde hinzugefügt.'
     messageType.value = 'success'
     await loadMembers()
   } catch {
-    message.value = 'Mitglied konnte nicht hinzugefuegt werden.'
+    message.value = 'Mitglied konnte nicht hinzugefügt werden.'
     messageType.value = 'error'
   } finally {
     isSaving.value = false
@@ -109,7 +109,7 @@ onMounted(loadMembers)
       </label>
 
       <button type="submit" :disabled="isSaving">
-        {{ isSaving ? 'Wird hinzugefuegt...' : 'Mitglied hinzufuegen' }}
+        {{ isSaving ? 'Wird hinzugefügt...' : 'Mitglied hinzufügen' }}
       </button>
     </form>
 

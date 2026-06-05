@@ -8,7 +8,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  groupSelected: [groupId: string]
+  groupSelected: [group: Group]
 }>()
 
 const groups = ref<Group[]>([])
@@ -51,9 +51,9 @@ function editGroup(group: Group) {
   form.description = group.description ?? ''
 }
 
-function selectGroup(groupId: string) {
-  selectedGroupId.value = groupId
-  emit('groupSelected', groupId)
+function selectGroup(group: Group) {
+  selectedGroupId.value = group.id
+  emit('groupSelected', group)
 }
 
 async function saveGroup() {
@@ -147,7 +147,7 @@ onMounted(loadGroups)
             name="selected-group"
             type="radio"
             :value="group.id"
-            @change="selectGroup(group.id)"
+            @change="selectGroup(group)"
           />
           <span>
             <strong>{{ group.name }}</strong>

@@ -64,10 +64,10 @@ async function saveAvailability(appointmentId: string, isAvailable: boolean) {
       ...availabilities.value.filter((item) => item.appointment_id !== appointmentId),
       saved,
     ]
-    message.value = 'Verfuegbarkeit wurde gespeichert.'
+    message.value = 'Verfügbarkeit wurde gespeichert.'
     messageType.value = 'success'
   } catch {
-    message.value = 'Verfuegbarkeit konnte nicht gespeichert werden.'
+    message.value = 'Verfügbarkeit konnte nicht gespeichert werden.'
     messageType.value = 'error'
   } finally {
     isSaving.value = ''
@@ -82,13 +82,13 @@ onMounted(loadAppointments)
   <section class="workspace-section" aria-labelledby="appointments-title">
     <div class="section-heading">
       <p>Arbeitspakete 4.2 und 4.3</p>
-      <h2 id="appointments-title">Termine und Verfuegbarkeit</h2>
+      <h2 id="appointments-title">Termine und Verfügbarkeit</h2>
     </div>
 
-    <p v-if="!activity" class="empty-state">Waehle zuerst eine Aktivitaet aus.</p>
+    <p v-if="!activity" class="empty-state">Wähle zuerst eine Aktivität aus.</p>
 
     <template v-else>
-      <p class="activity-context">Aktivitaet: {{ activity.title }}</p>
+      <p class="activity-context">Aktivität: {{ activity.title }}</p>
 
       <p v-if="message" class="form-message" :class="messageType" role="status">
         {{ message }}
@@ -97,7 +97,7 @@ onMounted(loadAppointments)
       <div class="appointment-list">
         <p v-if="isLoading" class="empty-state">Termine werden geladen...</p>
         <p v-else-if="appointments.length === 0" class="empty-state">
-          Noch keine Termine fuer diese Aktivitaet vorhanden.
+          Noch keine Termine für diese Aktivität vorhanden.
         </p>
 
         <article
@@ -113,9 +113,9 @@ onMounted(loadAppointments)
               Deine Antwort:
               {{
                 availabilityByAppointment.get(appointment.id) === true
-                  ? 'verfuegbar'
+                  ? 'verfügbar'
                   : availabilityByAppointment.get(appointment.id) === false
-                    ? 'nicht verfuegbar'
+                    ? 'nicht verfügbar'
                     : 'noch offen'
               }}
             </small>
