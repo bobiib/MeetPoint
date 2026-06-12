@@ -20,8 +20,9 @@ grant usage on schema app to meetpoint_web;
 grant select, insert on api.users to meetpoint_web;
 grant select, insert, update on api.groups to meetpoint_web;
 grant select, insert on api.appointments to meetpoint_web;
-grant select on api.activities to meetpoint_web;
+grant select, insert on api.activities to meetpoint_web;
 grant select, insert on api.interests to meetpoint_web;
+grant select, insert, delete on api.activity_interests to meetpoint_web;
 grant select, insert, update on api.availabilities to meetpoint_web;
 
 grant select, insert, delete on api.group_members to meetpoint_web;
@@ -32,5 +33,12 @@ grant select, insert, update on app.groups to meetpoint_web;
 grant select, insert, delete on app.group_members to meetpoint_web;
 grant select, insert on app.appointments to meetpoint_web;
 grant select, insert on app.interests to meetpoint_web;
+grant select, insert, delete on app.activity_interests to meetpoint_web;
 grant select, insert, update on app.availabilities to meetpoint_web;
-grant select on app.users, app.activities to meetpoint_web;
+grant select on app.users to meetpoint_web;
+grant select, insert on app.activities to meetpoint_web;
+
+grant execute on function api.delete_activity(uuid, uuid) to meetpoint_web;
+grant execute on function api.delete_appointment(uuid, uuid) to meetpoint_web;
+grant execute on function api.delete_group(uuid, uuid) to meetpoint_web;
+grant execute on function api.delete_interest(uuid, uuid) to meetpoint_web;

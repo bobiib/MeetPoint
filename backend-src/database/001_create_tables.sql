@@ -198,3 +198,7 @@ from app.appointments;
 create or replace view api.availabilities as
 select appointment_id, user_id, is_available, created_at, updated_at
 from app.availabilities;
+
+create or replace view api.activity_interests as
+select activity_id, interest_id
+from app.activity_interests;
