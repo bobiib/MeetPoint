@@ -11,62 +11,87 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <section class="session-panel" aria-label="Benutzersitzung">
-    <div>
-      <p class="label">Angemeldet als</p>
+  <section class="user-profile" aria-label="Benutzersitzung">
+    <div class="avatar">
+      {{ user.username.charAt(0).toUpperCase() }}
+    </div>
+    <div class="user-info">
       <p class="username">{{ user.username }}</p>
       <p class="email">{{ user.email }}</p>
     </div>
-
-    <button type="button" @click="emit('logout')">Abmelden</button>
+    <button type="button" class="btn-logout" @click="emit('logout')" title="Abmelden">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+    </button>
   </section>
 </template>
 
 <style scoped>
-.session-panel {
+.user-profile {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  width: min(100%, 520px);
-  margin-top: 28px;
-  border: 1px solid #d9e2ec;
-  border-radius: 8px;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 16px;
-  background: #f8fafc;
 }
 
-.label,
-.username,
-.email {
-  margin: 0;
-}
-
-.label {
-  color: #627d98;
-  font-size: 0.8rem;
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent), #3b82f6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 800;
-  text-transform: uppercase;
+  font-size: 1.2rem;
+  color: #fff;
+  box-shadow: var(--shadow-glow);
+}
+
+.user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .username {
-  color: #102a43;
-  font-size: 1.1rem;
-  font-weight: 800;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .email {
-  color: #486581;
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-button {
-  min-height: 42px;
-  border: 0;
+.btn-logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
   border-radius: 8px;
-  padding: 10px 14px;
-  color: #ffffff;
-  background: #b42318;
-  font-weight: 800;
   cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-logout:hover {
+  background: #ef4444;
+  color: #fff;
+  transform: translateX(2px);
 }
 </style>

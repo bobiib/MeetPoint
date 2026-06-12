@@ -63,6 +63,7 @@ const validationErrors = computed(() => {
   }
 
   return errors
+
 })
 
 const canSubmit = computed(() => Object.keys(validationErrors.value).length === 0 && !isSaving.value)
@@ -139,651 +140,627 @@ async function submitRegistration() {
 
 <template>
   <main v-if="!loggedInUser" class="auth-shell">
-    <section class="auth-hero" aria-labelledby="page-title">
-      <div class="hero-content">
-        <p class="eyebrow">MeetPoint</p>
-        <h1 id="page-title">Treffen planen, ohne Chat-Chaos.</h1>
-        <p>
-          Gruppen erstellen, Interessen sammeln, Aktivitäten auswählen und passende Termine
-          gemeinsam abstimmen.
-        </p>
-
-        <dl class="hero-metrics">
-          <div>
-            <dt>Status</dt>
-            <dd>Testbereit</dd>
-          </div>
-          <div>
-            <dt>Backend</dt>
-            <dd>PostgREST</dd>
-          </div>
-          <div>
-            <dt>Daten</dt>
-            <dd>PostgreSQL</dd>
-          </div>
-        </dl>
-      </div>
-    </section>
-
-    <section class="auth-panel" aria-label="Zugang">
-      <div class="auth-card">
-        <div class="segmented-control" role="tablist" aria-label="Zugang auswählen">
-          <button
-            type="button"
-            :class="{ active: authMode === 'login' }"
-            @click="authMode = 'login'"
-          >
-            Anmelden
-          </button>
-          <button
-            type="button"
-            :class="{ active: authMode === 'register' }"
-            @click="authMode = 'register'"
-          >
-            Registrieren
-          </button>
+    <div class="auth-overlay"></div>
+    <div class="auth-container">
+      <section class="auth-hero" aria-labelledby="page-title">
+        <div class="brand-logo">
+          <div class="logo-circle"></div>
+          <span>MeetPoint</span>
         </div>
+        <h1 id="page-title">Treffen planen,<br>ohne Chat-Chaos.</h1>
+        <p>Gruppen erstellen, Interessen sammeln, Aktivitäten auswählen und passende Termine gemeinsam abstimmen.</p>
+      </section>
 
-        <LoginForm v-if="authMode === 'login'" @login-success="handleLoginSuccess" />
-
-        <form v-else class="registration-form" novalidate @submit.prevent="submitRegistration">
-          <div class="form-heading">
-            <p>Neues Konto</p>
-            <h2>Konto erstellen</h2>
+      <section class="auth-panel">
+        <div class="auth-card">
+          <div class="glass-tabs">
+            <button
+              type="button"
+              :class="{ active: authMode === 'login' }"
+              @click="authMode = 'login'"
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              :class="{ active: authMode === 'register' }"
+              @click="authMode = 'register'"
+            >
+              Registrieren
+            </button>
           </div>
 
-          <label>
-            Benutzername
-            <input
-              v-model="form.username"
-              autocomplete="username"
-              name="username"
-              type="text"
-              :aria-invalid="wasSubmitted && Boolean(validationErrors.username)"
-            />
-            <span v-if="wasSubmitted && validationErrors.username" class="error-text">
-              {{ validationErrors.username }}
-            </span>
-          </label>
+          <div class="auth-form-container">
+            <LoginForm v-if="authMode === 'login'" @login-success="handleLoginSuccess" />
 
-          <label>
-            E-Mail-Adresse
-            <input
-              v-model="form.email"
-              autocomplete="email"
-              name="email"
-              type="email"
-              :aria-invalid="wasSubmitted && Boolean(validationErrors.email)"
-            />
-            <span v-if="wasSubmitted && validationErrors.email" class="error-text">
-              {{ validationErrors.email }}
-            </span>
-          </label>
+            <form v-else class="registration-form" novalidate @submit.prevent="submitRegistration">
+              <h2>Konto erstellen</h2>
+              <p class="subtitle">Werde Teil der MeetPoint Community.</p>
 
-          <label>
-            Passwort
-            <input
-              v-model="form.password"
-              autocomplete="new-password"
-              name="password"
-              type="password"
-              :aria-invalid="wasSubmitted && Boolean(validationErrors.password)"
-            />
-            <span v-if="wasSubmitted && validationErrors.password" class="error-text">
-              {{ validationErrors.password }}
-            </span>
-          </label>
+              <div class="input-group">
+                <input
+                  id="reg-username"
+                  v-model="form.username"
+                  autocomplete="username"
+                  name="username"
+                  type="text"
+                  placeholder=" "
+                  :aria-invalid="wasSubmitted && Boolean(validationErrors.username)"
+                />
+                <label for="reg-username">Benutzername</label>
+                <span v-if="wasSubmitted && validationErrors.username" class="error-text">
+                  {{ validationErrors.username }}
+                </span>
+              </div>
 
-          <label>
-            Passwort bestätigen
-            <input
-              v-model="form.passwordConfirmation"
-              autocomplete="new-password"
-              name="passwordConfirmation"
-              type="password"
-              :aria-invalid="wasSubmitted && Boolean(validationErrors.passwordConfirmation)"
-            />
-            <span v-if="wasSubmitted && validationErrors.passwordConfirmation" class="error-text">
-              {{ validationErrors.passwordConfirmation }}
-            </span>
-          </label>
+              <div class="input-group">
+                <input
+                  id="reg-email"
+                  v-model="form.email"
+                  autocomplete="email"
+                  name="email"
+                  type="email"
+                  placeholder=" "
+                  :aria-invalid="wasSubmitted && Boolean(validationErrors.email)"
+                />
+                <label for="reg-email">E-Mail-Adresse</label>
+                <span v-if="wasSubmitted && validationErrors.email" class="error-text">
+                  {{ validationErrors.email }}
+                </span>
+              </div>
 
-          <button type="submit" :disabled="isSaving">
-            {{ isSaving ? 'Wird gespeichert...' : 'Registrieren' }}
-          </button>
+              <div class="input-group">
+                <input
+                  id="reg-password"
+                  v-model="form.password"
+                  autocomplete="new-password"
+                  name="password"
+                  type="password"
+                  placeholder=" "
+                  :aria-invalid="wasSubmitted && Boolean(validationErrors.password)"
+                />
+                <label for="reg-password">Passwort</label>
+                <span v-if="wasSubmitted && validationErrors.password" class="error-text">
+                  {{ validationErrors.password }}
+                </span>
+              </div>
 
-          <p v-if="message" class="form-message" :class="messageType" role="status">
-            {{ message }}
-          </p>
-        </form>
-      </div>
-    </section>
+              <div class="input-group">
+                <input
+                  id="reg-password-confirm"
+                  v-model="form.passwordConfirmation"
+                  autocomplete="new-password"
+                  name="passwordConfirmation"
+                  type="password"
+                  placeholder=" "
+                  :aria-invalid="wasSubmitted && Boolean(validationErrors.passwordConfirmation)"
+                />
+                <label for="reg-password-confirm">Passwort bestätigen</label>
+                <span v-if="wasSubmitted && validationErrors.passwordConfirmation" class="error-text">
+                  {{ validationErrors.passwordConfirmation }}
+                </span>
+              </div>
+
+              <button class="btn-primary" type="submit" :disabled="isSaving">
+                {{ isSaving ? 'Wird gespeichert...' : 'Registrieren' }}
+              </button>
+
+              <p v-if="message" class="form-message" :class="messageType" role="status">
+                {{ message }}
+              </p>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 
   <main v-else class="dashboard-shell">
     <aside class="dashboard-sidebar">
-      <div class="brand-block">
-        <p class="eyebrow">MeetPoint</p>
-        <h1>Planungszentrale</h1>
+      <div class="brand-logo">
+        <div class="logo-circle"></div>
+        <span>MeetPoint</span>
       </div>
 
       <UserSession :user="loggedInUser" @logout="handleLogout" />
 
-      <div class="context-card">
-        <p>Ablauf</p>
-        <ol>
-          <li :class="{ done: selectedGroupId }">Gruppe auswählen</li>
-          <li :class="{ done: selectedActivity }">Aktivität auswählen</li>
-          <li>Termin vorschlagen</li>
-          <li>Verfügbarkeit eintragen</li>
-        </ol>
+      <div class="nav-context">
+        <h3>Planungs-Ablauf</h3>
+        <ul class="step-list">
+          <li :class="{ active: !selectedGroupId, completed: selectedGroupId }">
+            <span class="step-icon">1</span> Gruppe wählen
+          </li>
+          <li :class="{ active: selectedGroupId && !selectedActivity, completed: selectedActivity }">
+            <span class="step-icon">2</span> Aktivität wählen
+          </li>
+          <li :class="{ active: selectedGroupId && selectedActivity }">
+            <span class="step-icon">3</span> Termin finden
+          </li>
+        </ul>
       </div>
 
-      <div class="context-card">
-        <p>Aktuelle Auswahl</p>
-        <dl>
-          <div>
-            <dt>Gruppe</dt>
-            <dd>{{ selectedGroupLabel }}</dd>
-          </div>
-          <div>
-            <dt>Aktivität</dt>
-            <dd>{{ selectedActivityLabel }}</dd>
-          </div>
-        </dl>
+      <div class="nav-context selection-card">
+        <h3>Aktuelle Auswahl</h3>
+        <div class="selection-item">
+          <span>Gruppe</span>
+          <strong>{{ selectedGroupLabel }}</strong>
+        </div>
+        <div class="selection-item">
+          <span>Aktivität</span>
+          <strong>{{ selectedActivityLabel }}</strong>
+        </div>
       </div>
     </aside>
 
-    <section class="dashboard-content" aria-label="MeetPoint Dashboard">
+    <div class="dashboard-main">
       <header class="dashboard-header">
-        <div>
-          <p class="eyebrow">Dashboard</p>
-          <h2>Gruppen, Aktivitäten und Termine</h2>
-        </div>
-        <p>
-          Wähle zuerst eine Gruppe, danach eine Aktivität. Dann kannst du Termine erstellen
-          und Verfügbarkeiten setzen.
-        </p>
+        <h1>Übersicht</h1>
+        <p>Erstelle Gruppen, sammle Aktivitäten und plane gemeinsame Termine.</p>
       </header>
 
-      <div class="dashboard-grid">
-        <section class="dashboard-column">
+      <div class="dashboard-content">
+        <!-- Spalte 1: Gruppen & Mitglieder -->
+        <div class="content-col">
           <GroupManager :user="loggedInUser" @group-selected="handleGroupSelected" />
-          <GroupMembersManager v-if="selectedGroupId" :group-id="selectedGroupId" />
-          <InterestManager v-if="selectedGroupId" :group-id="selectedGroupId" :user="loggedInUser" />
-        </section>
+          <Transition name="fade-slide">
+            <GroupMembersManager v-if="selectedGroupId" :group-id="selectedGroupId" />
+          </Transition>
+          <Transition name="fade-slide">
+            <InterestManager v-if="selectedGroup" :group="selectedGroup" :user="loggedInUser" />
+          </Transition>
+        </div>
 
-        <section class="dashboard-column">
-          <ActivityOverview
-            v-if="selectedGroupId"
-            :group-id="selectedGroupId"
-            @activity-selected="handleActivitySelected"
-          />
-          <div v-else class="empty-dashboard-card">
-            <h3>Keine Gruppe ausgewählt</h3>
-            <p>Wähle eine Gruppe aus, damit Aktivitäten und Termine angezeigt werden.</p>
-          </div>
+        <!-- Spalte 2: Aktivitäten & Termine -->
+        <div class="content-col">
+          <Transition name="fade-slide" mode="out-in">
+            <ActivityOverview
+              v-if="selectedGroup"
+              :key="selectedGroup.id"
+              :group="selectedGroup"
+              :user="loggedInUser"
+              @activity-selected="handleActivitySelected"
+            />
+            <div v-else class="glass-panel empty-state">
+              <div class="icon-placeholder">🌍</div>
+              <h3>Keine Gruppe ausgewählt</h3>
+              <p>Bitte wähle links eine Gruppe aus oder erstelle eine neue, um Aktivitäten zu sehen.</p>
+            </div>
+          </Transition>
 
-          <AppointmentProposalForm
-            :activity="selectedActivity"
-            :user="loggedInUser"
-            @appointment-created="handleAppointmentCreated"
-          />
-          <AppointmentList
-            :key="`${selectedActivity?.id ?? 'none'}-${appointmentRefreshKey}`"
-            :activity="selectedActivity"
-            :user="loggedInUser"
-          />
-        </section>
+          <Transition name="fade-slide">
+            <div v-if="selectedActivity && selectedGroup" class="appointment-section">
+              <AppointmentProposalForm
+                :activity="selectedActivity"
+                :user="loggedInUser"
+                @appointment-created="handleAppointmentCreated"
+              />
+              <AppointmentList
+                :key="`${selectedActivity.id}-${appointmentRefreshKey}`"
+                :activity="selectedActivity"
+                :group="selectedGroup"
+                :user="loggedInUser"
+              />
+            </div>
+          </Transition>
+        </div>
       </div>
-    </section>
+    </div>
   </main>
 </template>
 
 <style scoped>
+/* --- GLOBALS (DARK THEME) --- */
+:global(:root) {
+  --bg-main: #0B1120;
+  --bg-panel: rgba(30, 41, 59, 0.4);
+  --bg-panel-solid: #1e293b;
+  --bg-input: rgba(15, 23, 42, 0.6);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent: #10b981;
+  --accent-hover: #059669;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(16, 185, 129, 0.5);
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.15);
+  --radius: 12px;
+}
+
 :global(*) {
   box-sizing: border-box;
 }
 
 :global(body) {
   margin: 0;
-  min-width: 320px;
-  color: #182230;
-  background: #eef3f1;
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-
-button,
-input {
-  font: inherit;
-}
-
-.auth-shell {
-  display: grid;
-  grid-template-columns: minmax(360px, 0.95fr) minmax(360px, 1fr);
+  background-color: var(--bg-main);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
+  color: var(--text-main);
+  font-family: 'Inter', sans-serif;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+:global(h1), :global(h2), :global(h3), :global(h4) {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+}
+
+/* --- COMMON COMPONENTS --- */
+:global(.btn-primary) {
+  width: 100%;
+  padding: 14px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+:global(.btn-primary:hover:not(:disabled)) {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+:global(.btn-primary:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+:global(.glass-panel) {
+  background: var(--bg-panel);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+/* INPUT FLOATING LABELS */
+:global(.input-group) {
+  position: relative;
+  margin-bottom: 20px;
+}
+:global(.input-group input), :global(.input-group textarea) {
+  width: 100%;
+  padding: 16px 16px 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-main);
+  font-size: 1rem;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+:global(.input-group input:focus), :global(.input-group textarea:focus) {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--border-focus);
+}
+:global(.input-group input[aria-invalid="true"]), :global(.input-group textarea[aria-invalid="true"]) {
+  border-color: #ef4444;
+}
+:global(.input-group label) {
+  position: absolute;
+  left: 16px;
+  top: 14px;
+  color: var(--text-muted);
+  font-size: 1rem;
+  pointer-events: none;
+  transition: all 0.2s ease-out;
+}
+:global(.input-group input:focus ~ label),
+:global(.input-group input:not(:placeholder-shown) ~ label),
+:global(.input-group textarea:focus ~ label),
+:global(.input-group textarea:not(:placeholder-shown) ~ label) {
+  top: 4px;
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+:global(.error-text) {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: block;
+}
+
+/* --- AUTH SHELL --- */
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.auth-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2000&q=80') center/cover;
+  opacity: 0.15;
+  z-index: 0;
+}
+.auth-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  width: 100%;
+  max-width: 1100px;
+  padding: 40px;
+  z-index: 1;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+.logo-circle {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--accent), #3b82f6);
+  border-radius: 50%;
+  box-shadow: var(--shadow-glow);
+}
+.brand-logo span {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
 }
 
 .auth-hero {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 100vh;
-  padding: clamp(32px, 7vw, 96px);
-  color: #ffffff;
-  background:
-    linear-gradient(rgba(8, 47, 73, 0.78), rgba(20, 83, 45, 0.72)),
-    url('https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1800&q=80')
-      center / cover;
 }
-
-.hero-content {
-  max-width: 700px;
+.auth-hero h1 {
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to right, #fff, #94a3b8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
-
-.eyebrow {
-  margin: 0 0 12px;
-  color: #0f766e;
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-h1,
-h2,
-p {
-  margin-top: 0;
-}
-
-h1 {
-  margin-bottom: 18px;
-  font-size: clamp(3rem, 7vw, 5.8rem);
-  line-height: 0.96;
-}
-
-.auth-hero .eyebrow {
-  color: #c7f9e5;
-}
-
-.auth-hero p:not(.eyebrow) {
-  max-width: 520px;
-  margin-bottom: 0;
-  color: #e3f8ef;
-  font-size: 1.1rem;
-  line-height: 1.7;
-}
-
-.hero-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  max-width: 560px;
-  margin: 42px 0 0;
-}
-
-.hero-metrics div {
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 8px;
-  padding: 14px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(10px);
-}
-
-.hero-metrics dt {
-  color: #bbf7d0;
-  font-size: 0.76rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.hero-metrics dd {
-  margin: 4px 0 0;
-  color: #ffffff;
-  font-weight: 800;
+.auth-hero p {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  max-width: 400px;
+  line-height: 1.6;
 }
 
 .auth-panel {
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  padding: clamp(28px, 5vw, 72px);
+  align-items: center;
 }
-
 .auth-card {
-  width: min(100%, 560px);
-  border: 1px solid #d9e2ec;
-  border-radius: 8px;
-  padding: 22px;
-  background: #ffffff;
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.13);
-}
-
-.segmented-control {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  margin-bottom: 26px;
-  border-radius: 8px;
-  padding: 6px;
-  background: #eef3f1;
-}
-
-.segmented-control button {
-  min-height: 42px;
-  color: #486581;
-  background: transparent;
-}
-
-.segmented-control button.active {
-  color: #ffffff;
-  background: #0f766e;
-}
-
-.form-heading p,
-.form-heading h2 {
-  margin: 0;
-}
-
-.form-heading p {
-  color: #0f766e;
-  font-size: 0.78rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-h2 {
-  margin-bottom: 28px;
-  color: #102a43;
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
-}
-
-.registration-form {
-  display: grid;
-  gap: 18px;
-}
-
-label {
-  display: grid;
-  gap: 8px;
-  color: #263f53;
-  font-size: 0.95rem;
-  font-weight: 750;
-}
-
-input {
   width: 100%;
-  min-height: 48px;
-  border: 1px solid #bcccdc;
+  max-width: 420px;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.glass-tabs {
+  display: flex;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  padding: 6px;
+  margin-bottom: 32px;
+}
+.glass-tabs button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
   border-radius: 8px;
-  padding: 11px 13px;
-  color: #102a43;
-  background: #ffffff;
-}
-
-input:focus {
-  border-color: #0f766e;
-  outline: 3px solid rgba(15, 118, 110, 0.16);
-}
-
-input[aria-invalid='true'] {
-  border-color: #b42318;
-}
-
-.error-text {
-  color: #b42318;
-  font-size: 0.84rem;
-  font-weight: 700;
-}
-
-button {
-  min-height: 50px;
-  border: 0;
-  border-radius: 8px;
-  padding: 12px 18px;
-  color: #ffffff;
-  background: #0f766e;
-  font-weight: 800;
   cursor: pointer;
+  transition: all 0.3s;
+}
+.glass-tabs button.active {
+  background: var(--bg-panel-solid);
+  color: var(--text-main);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-button:hover:not(:disabled) {
-  background: #115e59;
+.auth-form-container h2 {
+  font-size: 2rem;
+  margin: 0 0 8px;
 }
-
-button:disabled {
-  cursor: wait;
-  opacity: 0.68;
+.subtitle {
+  color: var(--text-muted);
+  margin-bottom: 24px;
 }
-
 .form-message {
-  margin: 0;
+  padding: 12px;
   border-radius: 8px;
-  padding: 12px 14px;
-  font-weight: 700;
+  margin-top: 16px;
+  font-weight: 500;
+  text-align: center;
 }
+.form-message.error { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+.form-message.success { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
 
-.form-message.success {
-  color: #14532d;
-  background: #dcfce7;
-}
-
-.form-message.error {
-  color: #7f1d1d;
-  background: #fee2e2;
-}
-
+/* --- DASHBOARD SHELL --- */
 .dashboard-shell {
-  display: grid;
-  grid-template-columns: 340px minmax(0, 1fr);
-  min-height: 100vh;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .dashboard-sidebar {
-  position: sticky;
-  top: 0;
+  width: 300px;
+  background: rgba(15, 23, 42, 0.8);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  height: 100vh;
-  padding: 28px;
+  padding: 24px;
+  gap: 24px;
   overflow-y: auto;
-  color: #ffffff;
-  background: #0b3b3a;
 }
 
-.brand-block h1 {
-  margin: 0;
-  color: #ffffff;
-  font-size: 2.1rem;
-  line-height: 1.05;
+.nav-context {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
 }
-
-.brand-block .eyebrow {
-  color: #a7f3d0;
-}
-
-.context-card {
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 8px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.context-card p {
-  margin: 0 0 12px;
-  color: #a7f3d0;
-  font-size: 0.78rem;
-  font-weight: 800;
+.nav-context h3 {
+  font-size: 0.85rem;
   text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin: 0 0 16px;
 }
 
-.context-card ol {
-  display: grid;
-  gap: 10px;
+.step-list {
+  list-style: none;
+  padding: 0;
   margin: 0;
-  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
-
-.context-card li {
-  color: #d1fae5;
-}
-
-.context-card li.done {
-  color: #ffffff;
-  font-weight: 800;
-}
-
-.context-card dl {
-  display: grid;
+.step-list li {
+  display: flex;
+  align-items: center;
   gap: 12px;
-  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+.step-icon {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--bg-input);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+}
+.step-list li.active {
+  color: var(--text-main);
+}
+.step-list li.active .step-icon {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-glow);
+}
+.step-list li.completed {
+  color: var(--accent);
+}
+.step-list li.completed .step-icon {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--accent);
 }
 
-.context-card div {
-  display: grid;
-  gap: 4px;
+.selection-item {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.selection-item span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.selection-item strong {
+  color: var(--text-main);
+  font-size: 1rem;
 }
 
-.context-card dt {
-  color: #a7f3d0;
-  font-size: 0.78rem;
-  font-weight: 800;
-}
-
-.context-card dd {
-  margin: 0;
-  color: #ffffff;
-  font-weight: 800;
-}
-
-.dashboard-content {
-  padding: clamp(24px, 4vw, 48px);
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 40px;
 }
 
 .dashboard-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 28px;
+  margin-bottom: 40px;
 }
-
-.dashboard-header h2 {
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  margin: 0 0 8px;
+}
+.dashboard-header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
   margin: 0;
-  color: #102a43;
 }
 
-.dashboard-header p:last-child {
-  max-width: 520px;
-  margin: 0;
-  color: #486581;
-  line-height: 1.6;
-}
-
-.dashboard-grid {
+.dashboard-content {
   display: grid;
-  grid-template-columns: minmax(320px, 0.9fr) minmax(360px, 1.1fr);
-  gap: 22px;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
   align-items: start;
 }
 
-.dashboard-column {
-  display: grid;
-  gap: 18px;
+.content-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.empty-dashboard-card {
-  border: 1px dashed #bcccdc;
-  border-radius: 8px;
-  padding: 22px;
-  background: #ffffff;
+/* Animations */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(15px) scale(0.98);
 }
 
-.empty-dashboard-card h3,
-.empty-dashboard-card p {
+.empty-state {
+  text-align: center;
+  padding: 40px 24px !important;
+}
+.icon-placeholder {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+.empty-state h3 {
+  margin: 0 0 8px;
+}
+.empty-state p {
+  color: var(--text-muted);
   margin: 0;
 }
 
-.empty-dashboard-card h3 {
-  margin-bottom: 8px;
-  color: #102a43;
-}
-
-.empty-dashboard-card p {
-  color: #627d98;
-  line-height: 1.6;
-}
-
-:deep(.login-panel) {
-  margin-top: 0;
-}
-
-:deep(.login-form) {
-  width: 100%;
-}
-
-:deep(.session-panel) {
-  width: 100%;
-  margin-top: 0;
-  border-color: rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-:deep(.session-panel .label),
-:deep(.session-panel .email) {
-  color: #bbf7d0;
-}
-
-:deep(.session-panel .username) {
-  color: #ffffff;
-}
-
-:deep(.workspace-section),
-:deep(.members-section) {
-  width: 100%;
-  margin-top: 0;
-  border: 1px solid #d9e2ec;
-  border-radius: 8px;
-  padding: 20px;
-  background: #ffffff;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.07);
-}
-
-:deep(.section-heading) {
-  border-bottom: 1px solid #eef2f7;
-  padding-bottom: 12px;
-}
-
-@media (max-width: 1100px) {
-  .dashboard-shell,
-  .dashboard-grid {
+/* Responsive */
+@media (max-width: 1024px) {
+  .dashboard-content {
     grid-template-columns: 1fr;
   }
-
-  .dashboard-sidebar {
-    position: static;
-    height: auto;
-  }
 }
-
-@media (max-width: 820px) {
-  .auth-shell {
+@media (max-width: 768px) {
+  .auth-container {
     grid-template-columns: 1fr;
+    padding: 20px;
   }
-
   .auth-hero {
-    min-height: 42vh;
+    text-align: center;
+    align-items: center;
   }
-
-  .hero-metrics {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard-header {
-    align-items: flex-start;
+  .dashboard-shell {
     flex-direction: column;
+  }
+  .dashboard-sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
   }
 }
 </style>
