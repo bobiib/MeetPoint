@@ -51,3 +51,20 @@ export async function createInterest(input: InterestInput): Promise<Interest> {
 
   return interests[0]
 }
+
+export async function deleteInterest(interestId: string, userId: string): Promise<void> {
+  const response = await fetch(`${apiBaseUrl}/rpc/delete_interest`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      p_interest_id: interestId,
+      p_user_id: userId,
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Interesse konnte nicht gelöscht werden. Möglicherweise fehlen dir die Rechte.')
+  }
+}

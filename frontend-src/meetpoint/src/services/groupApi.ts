@@ -77,3 +77,20 @@ export async function updateGroup(groupId: string, input: Pick<GroupInput, 'name
 
   return groups[0]
 }
+
+export async function deleteGroup(groupId: string, userId: string): Promise<void> {
+  const response = await fetch(`${apiBaseUrl}/rpc/delete_group`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      p_group_id: groupId,
+      p_user_id: userId,
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Gruppe konnte nicht gelöscht werden. Möglicherweise fehlen dir die Rechte.')
+  }
+}

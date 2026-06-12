@@ -20,6 +20,18 @@ export async function fetchAvailability(userId: string): Promise<Availability[]>
   return response.json()
 }
 
+export async function fetchAvailabilitiesByAppointments(appointmentIds: string[]): Promise<Availability[]> {
+  if (appointmentIds.length === 0) return []
+  const ids = appointmentIds.map((id) => encodeURIComponent(id)).join(',')
+  const response = await fetch(`${apiBaseUrl}/availabilities?appointment_id=in.(${ids})`)
+
+  if (!response.ok) {
+    throw new Error('Verfuegbarkeiten konnten nicht geladen werden.')
+  }
+
+  return response.json()
+}
+
 export async function setAvailability(
   appointmentId: string,
   userId: string,

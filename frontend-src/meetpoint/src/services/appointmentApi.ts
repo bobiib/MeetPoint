@@ -54,3 +54,20 @@ export async function createAppointment(input: AppointmentInput): Promise<Appoin
 
   return appointments[0]
 }
+
+export async function deleteAppointment(appointmentId: string, userId: string): Promise<void> {
+  const response = await fetch(`${apiBaseUrl}/rpc/delete_appointment`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      p_appointment_id: appointmentId,
+      p_user_id: userId,
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Terminvorschlag konnte nicht gelöscht werden. Möglicherweise fehlen dir die Rechte.')
+  }
+}

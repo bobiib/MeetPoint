@@ -27,7 +27,8 @@ export async function loginUser(data: LoginData): Promise<LoggedInUser> {
     throw new Error('E-Mail-Adresse oder Passwort ist falsch.')
   }
 
-  return response.json()
+  const users = await response.json()
+  return users[0]
 }
 
 export function saveSession(user: LoggedInUser) {
@@ -46,4 +47,12 @@ export function loadSession(): LoggedInUser | null {
 
 export function logoutUser() {
   localStorage.removeItem('meetpoint_user')
+}
+
+export async function fetchAllUsers(): Promise<LoggedInUser[]> {
+  const response = await fetch(`${apiBaseUrl}/users`)
+  if (!response.ok) {
+    throw new Error('Benutzer konnten nicht geladen werden.')
+  }
+  return response.json()
 }
