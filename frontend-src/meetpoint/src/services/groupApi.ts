@@ -15,9 +15,28 @@ export interface GroupInput {
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api'
 
-export async function fetchGroups(ownerId: string): Promise<Group[]> {
+export async function fetchGroups(userId: string): Promise<Group[]> {
+  // 1. Fetch group memberships for this user
+  const memberResponse = await fetch(
+    `${apiBaseUrl}/group_members?user_id=eq.${encodeURIComponent(userId)}`
+  )
+
+  if (!memberResponse.ok) {
+    throw new Error('Gruppen konnten nicht geladen werden.')
+  }
+
+  const memberships = (await memberResponse.json()) as { group_id: string }[]
+  
+  if (memberships.length === 0) {
+    return []
+  }
+
+  // 2. Extract group IDs
+  const groupIds = memberships.map(m => m.group_id)
+
+  // 3. Fetch groups by their IDs
   const response = await fetch(
-    `${apiBaseUrl}/groups?owner_id=eq.${encodeURIComponent(ownerId)}&order=created_at.desc`,
+    `${apiBaseUrl}/groups?id=in.(${groupIds.map(id => encodeURIComponent(id)).join(',')})&order=created_at.desc`,
   )
 
   if (!response.ok) {
