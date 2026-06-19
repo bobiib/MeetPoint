@@ -3,6 +3,22 @@ create schema if not exists api;
 
 create extension if not exists pgcrypto;
 
+do $$
+begin
+  if not exists (select 1 from pg_roles where rolname = 'meetpoint_web') then
+    create role meetpoint_web nologin;
+  end if;
+end;
+$$;
+
+do $$
+begin
+  if exists (select 1 from pg_roles where rolname = 'meetpoint') then
+    grant meetpoint_web to meetpoint;
+  end if;
+end;
+$$;
+
 create table if not exists app.users (
   id uuid primary key default gen_random_uuid(),
   username text not null,

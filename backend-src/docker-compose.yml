@@ -10,10 +10,7 @@ services:
       - "5433:5432"
     volumes:
       - meetpoint-db-data:/var/lib/postgresql/data
-      - ./database/001_create_tables.sql:/docker-entrypoint-initdb.d/001_create_tables.sql:ro
-      - ./database/002_seed_demo_data.sql:/docker-entrypoint-initdb.d/002_seed_demo_data.sql:ro
-      - ./database/003_postgrest_permissions.sql:/docker-entrypoint-initdb.d/003_postgrest_permissions.sql:ro
-      - ./database/004_auth_functions.sql:/docker-entrypoint-initdb.d/004_auth_functions.sql:ro
+      - ./database:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U meetpoint -d meetpoint"]
       interval: 5s
